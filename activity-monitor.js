@@ -42,12 +42,12 @@ const activityMonitorHandler = () => {
       execProcess('powershell "Get-Process | Sort-Object CPU -Descending | Select-Object -Property Name, CPU, WorkingSet -First 1 | ForEach-Object { $_.Name + \' \' + $_.CPU + \' \' + $_.WorkingSet }"');
       break;
     default:
-      // clearInterval(handlerId);
-      // handlerId = null;
-      // console.warn(`Your ${platform} doesn't support`);
+      clearInterval(handlerId);
+      handlerId = null;
+      console.warn(`Your ${platform} doesn't support`);
   }
 };
 
 let handlerId = setInterval(activityMonitorHandler, 100);
-let writeToFileId = setInterval(writeToFile, 1000 * 60);
+let writeToFileId = setInterval(writeToFile, 1000);
 
