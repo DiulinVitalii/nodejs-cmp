@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-cmp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "task1.mjs",
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "task1": "nodemon task1.mjs",
+    "task2": "nodemon task2.mjs",
+    "task3": "nodemon task3.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiulinVitalii/nodejs-cmp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DiulinVitalii/nodejs-cmp/issues"
+  },
+  "homepage": "https://github.com/DiulinVitalii/nodejs-cmp#readme"
+}
