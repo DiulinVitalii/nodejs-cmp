@@ -1,21 +1,12 @@
-import { ProductEntity } from '../schemas/product.entity.ts';
-import { productModel } from '../models/product.model.ts';
-import { CustomError } from '../utils/custom-error.ts';
-import { StatusCodes } from 'http-status-codes';
-import { NO_PRODUCT } from '../utils/constants.ts';
+import { ProductRepository } from '../data-access/product.repository.ts';
+import { Product } from '../entities/Product.ts';
 
 export class ProductService {
-  static getProducts(): ProductEntity[] {
-    return productModel.getProducts();
+  static getProducts(): Promise<Product[]> {
+    return ProductRepository.getProducts();
   }
 
-  static getProduct(productId: string): ProductEntity {
-    const product = productModel.getProduct(productId);
-
-    if (!product) {
-      throw new CustomError(NO_PRODUCT, StatusCodes.NOT_FOUND);
-    }
-
-    return product;
+  static getProduct(productId: number): Promise<Product> {
+    return ProductRepository.getProduct(productId);
   }
 }

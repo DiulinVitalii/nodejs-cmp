@@ -1,79 +1,31 @@
-import { cardModel } from '../models/card.model.ts';
-import { CustomError } from '../utils/custom-error.ts';
-import { CartEntity, CartItemEntity, UserCard } from '../schemas/cart.entity.ts';
-import { UserEntity } from '../schemas/user.entity.ts';
-import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import { OrderEntity } from '../schemas/order.entity.ts';
-import { NO_CARD } from '../utils/constants.ts';
+import { CartRepository } from '../data-access/cart.repository.ts';
+import { Cart } from '../entities/Cart.ts';
+import { User } from '../entities/User.ts';
+import { Order } from '../entities/Order.ts';
+import { OrderModel } from '../models/order.model.ts';
 
 export class CardService {
-  static createUserCard(userId: string): UserCard {
-    const card = cardModel.getUserCard(userId);
-
-    if (!card) {
-      return cardModel.createUserCard(userId);
-    }
-
-    if (card && card.isDeleted) {
-      return cardModel.softCreateUserCard(userId);
-    }
-
-    throw new CustomError(`Card for user id ${userId} already exist`, StatusCodes.CONFLICT);
+  static createUserCard(userId: number): Promise<Cart> {
+    return CartRepository.createUserCard(userId);
   }
 
-  static getUserCard(userId: string): UserCard {
-    const data = cardModel.getUserCard(userId);
-
-    if (!data || data.isDeleted) {
-      throw new CustomError(ReasonPhrases.NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-
-    const { isDeleted: __, ...card } = data;
-
-    return data ? { card, totalPrice: this.getTotalPrice(data) } : this.createUserCard(userId);
+  static getUserCard(userId: number): Promise<Cart> {
+    return CartRepository.getUserCard(userId);
   }
 
-  static getUserById(userId: string): UserEntity | null {
-    return cardModel.getUserById(userId);
+  static getUserById(userId: number): Promise<User |null> {
+    return CartRepository.getUserById(userId);
   }
 
-  static updateUserCard(userId: string, products: CartItemEntity[]): UserCard {
-    const card = cardModel.getUserCard(userId);
-
-    if (!card || card.isDeleted) {
-      throw new CustomError(NO_CARD, StatusCodes.NOT_FOUND);
-    }
-
-    return { card: cardModel.updateUserCard(userId, products), totalPrice: this.getTotalPrice(card) };
+  static updateUserCard(userId: number, products: { id: number; count: number; }[]): Promise<Cart> {
+    return CartRepository.updateUserCard(userId, products);
   }
 
-  static softDeleteUserCard(userId: string): void {
-    const card = cardModel.getUserCard(userId);
-
-    if (!card) {
-      throw new CustomError(NO_CARD, StatusCodes.NOT_FOUND);
-    }
-
-    cardModel.softDeleteUserCard(userId);
+  static async softDeleteUserCard(userId: number): Promise<void> {
+    await CartRepository.softDeleteUserCard(userId);
   }
 
-  static createUserOrder(userId: string, data: Partial<OrderEntity>): OrderEntity {
-    const card = cardModel.getUserCard(userId);
-
-    if (!card || card.isDeleted) {
-      throw new CustomError(ReasonPhrases.NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-
-    const order = cardModel.createUserOrder(userId, data);
-    order.total = this.getTotalPrice(card);
-
-    return order;
-  }
-
-  private static getTotalPrice(userCard: Partial<CartEntity>): number {
-    return userCard?.items?.reduce((res, item) => {
-      res += item.product.price * item.count;
-      return res;
-    }, 0) || 0;
+  static createUserOrder(userId: number, data: OrderModel): Promise<Order> {
+    return CartRepository.createUserOrder(userId, data);
   }
 }
