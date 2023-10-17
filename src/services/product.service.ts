@@ -1,12 +1,12 @@
 import { ProductRepository } from '../data-access/product.repository.ts';
-import { Product } from '../entities/Product.ts';
+import { ProductEntity } from '../entities/product.entity.ts';
 
 export class ProductService {
-  static getProducts(): Promise<Product[]> {
+  static getProducts(): Promise<ProductEntity[]> {
     return ProductRepository.getProducts();
   }
 
-  static getProduct(productId: number): Promise<Product> {
+  static getProduct(productId: string): Promise<ProductEntity> {
     return ProductRepository.getProduct(productId);
   }
 }

@@ -1,32 +1,23 @@
-import { DI } from '../index.ts';
-import { Cart } from '../entities/Cart.ts';
-import { Reference } from '@mikro-orm/core';
-import { User } from '../entities/User.ts';
 import { CustomError } from '../utils/custom-error.ts';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { NO_CART } from '../utils/constants.ts';
-import { Product } from '../entities/Product.ts';
-import { CartItem } from '../entities/CartItem.ts';
-import { Delivery } from '../entities/Delivery.ts';
-import { Payment } from '../entities/Payment.ts';
-import { Order, ORDER_STATUS } from '../entities/Order.ts';
 import { OrderModel } from '../models/order.model.ts';
+import { Cart, CartEntity } from '../entities/cart.entity.ts';
+import { ProductEntity } from '../entities/product.entity.ts';
+import { Order, OrderEntity } from '../entities/order.entity.ts';
 
 export class CartRepository {
-  static async createUserCard(userId: number): Promise<Cart> {
-    const cart = await DI.cartRepository.findOne(
-      { userId },
-      { populate: ['items'] }
-    );
+  static async createUserCard(userId: string): Promise<CartEntity> {
+    const cart = await Cart.findById(userId).populate('items.product');
 
     if (!cart || cart?.isDeleted) {
-      const newCart: Cart = await DI.cartRepository.upsert({
-        userId: Reference.createFromPK(User, userId),
+      const newCart: CartEntity = await Cart.create({
+        userId: userId,
         isDeleted: false
       });
       if (cart) {
-        cart.items.removeAll();
-        await DI.em.persistAndFlush(cart);
+        cart.items = newCart.items;
+        await cart.save();
       }
 
       return cart || newCart;
@@ -35,11 +26,8 @@ export class CartRepository {
     throw new CustomError(`Card for user id ${userId} already exist`, StatusCodes.CONFLICT);
   }
 
-  static async getUserCard(userId: number): Promise<Cart> {
-    const cart = await DI.cartRepository.findOne(
-      { userId },
-      { populate: ['items', 'items.product'] }
-    );
+  static async getUserCard(userId: string): Promise<CartEntity> {
+    const cart = await Cart.findOne({ userId }).populate('items.product');
 
     if (!cart || cart.isDeleted) {
       throw new CustomError(ReasonPhrases.NOT_FOUND, StatusCodes.NOT_FOUND);
@@ -48,70 +36,55 @@ export class CartRepository {
     return cart;
   }
 
-  static getUserById(userId: number): Promise<User | null> {
-    return DI.userRepository.findOne(userId);
-  }
-
-  static async updateUserCard(userId: number, products: {id: number; count: number;}[]): Promise<Cart> {
-    const cart = await DI.cartRepository.findOne(
-      { userId },
-      { fields: ['id', 'items.product', 'items.count'] }
-    );
+  static async updateUserCard(userId: string, products: {id: string; count: number;}[]): Promise<CartEntity> {
+    const cart = await Cart.findOne({ userId }).populate('items.product');
 
     if (!cart || cart.isDeleted) {
       throw new CustomError(NO_CART, StatusCodes.NOT_FOUND);
     }
-
-    cart?.items?.add(products.reduce((res, productItem) => {
-      const item = DI.itemRepository.create({
-        cartId: Reference.createFromPK(Cart, cart.id),
-        product: Reference.createFromPK(Product, productItem.id),
-        count: productItem.count
-      });
-      res.push(item);
-      return res;
-    }, [] as CartItem[]));
-
-    await DI.em.persistAndFlush(cart);
+    products.forEach( productItem => {
+      const item = cart.items.find(item => item.product.id === productItem.id);
+      if (item) {
+        item.count = productItem.count;
+      } else {
+        cart.items.push({
+          product: productItem.id as any as ProductEntity,
+          count: productItem.count
+        });
+      }
+    });
 
     return cart;
   }
 
-  static async softDeleteUserCard(userId: number): Promise<void> {
-    const card = await DI.cartRepository.findOne({ userId });
+  static async softDeleteUserCard(userId: string): Promise<void> {
+    const cart = await Cart.findOne({ userId });
 
-    if (!card) {
+    if (!cart) {
       throw new CustomError(NO_CART, StatusCodes.NOT_FOUND);
     }
 
-    card.isDeleted = true;
+    cart.isDeleted = true;
 
-    await DI.em.persistAndFlush(card);
+    await cart.save();
   }
 
-  static async createUserOrder(userId: number, data: OrderModel): Promise<Order> {
-    const card = await DI.cartRepository.findOne({ userId });
+  static async createUserOrder(userId: string, data: OrderModel): Promise<OrderEntity> {
+    const cart = await Cart.findOne({ userId });
 
-    if (!card || card.isDeleted) {
+    if (!cart || cart.isDeleted) {
       throw new CustomError(ReasonPhrases.NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    const delivery: Delivery = DI.deliveryRepository.create(data.delivery);
-    const payment: Payment = DI.paymentRepository.create(data.payment);
+    const order: OrderEntity = await Order.create({
+      userId: userId,
+      cartId: cart.id,
+      delivery: data.delivery,
+      payment: data.payment,
+      comments: data.comments,
+      status: data.status
+    });
 
-    const order: Order = DI.orderRepository.create({
-      cartId: Reference.createFromPK(Cart, card.id),
-      delivery: delivery,
-      payment: payment,
-      comments: data.comments as string,
-      status: data.status as ORDER_STATUS
-    } as any);
-
-    await DI.em.persistAndFlush([order, delivery, payment]);
-
-    return DI.orderRepository.findOneOrFail(
-      order.id,
-      { populate: ['delivery', 'payment', 'cartId.items.product'] }
-    );
+    return Order.findById(order.id).populate('cartId') as any as OrderEntity;
   }
 }

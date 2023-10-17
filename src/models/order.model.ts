@@ -1,4 +1,7 @@
-import { ORDER_STATUS } from '../entities/Order.ts';
+export enum ORDER_STATUS {
+  CREATED = 'created',
+  COMPLETED = 'completed',
+}
 
 export interface OrderModel {
   payment: {

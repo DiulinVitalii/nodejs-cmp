@@ -1,19 +1,19 @@
-import { DI } from '../index.ts';
 import { CustomError } from '../utils/custom-error.ts';
 import { NO_PRODUCT } from '../utils/constants.ts';
 import { StatusCodes } from 'http-status-codes';
-import { Product } from '../entities/Product.ts';
+import { Product, ProductEntity } from '../entities/product.entity.ts';
 
 export class ProductRepository {
-  static getProducts(): Promise<Product[]> {
-    return DI.productRepository.findAll();
+  static getProducts(): Promise<ProductEntity[]> {
+    return Product.find();
   }
 
-  static getProduct(productId: number): Promise<Product>  {
-    try {
-      return DI.productRepository.findOneOrFail(productId);
-    } catch (e) {
+  static async getProduct(productId: string): Promise<ProductEntity>  {
+    const product = await Product.findById(productId);
+    if (!product) {
       throw new CustomError(NO_PRODUCT, StatusCodes.NOT_FOUND);
     }
+
+    return product;
   }
 }

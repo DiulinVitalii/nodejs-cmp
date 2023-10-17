@@ -1,12 +1,15 @@
-version: '3'
+# vi docker-compose.yml
+version: '3.3'
 services:
-  postgres-db:
-    image: "postgres:12"
-    container_name: "node-gmp-db"
-    environment:
-      - POSTGRES_USER=node_gmp
-      - POSTGRES_PASSWORD=password123
-      - POSTGRES_DB=node_gmp
-    restart: always
+  mongo:
     ports:
-      - '5432:5432'
+      - '27017:27017'
+    container_name: dkrcomp-mongo
+    restart: always
+    logging:
+      options:
+        max-size: 1g
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=bdung
+    image: mongo

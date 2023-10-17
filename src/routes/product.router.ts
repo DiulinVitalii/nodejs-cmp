@@ -3,13 +3,13 @@ import { ProductService } from '../services/product.service.ts';
 import { StatusCodes } from 'http-status-codes';
 import { ApiResponseModel } from '../models/api-response.model.ts';
 import { SOMETHING_WENT_WRONG } from '../utils/constants.ts';
-import { Product } from '../entities/Product.ts';
+import { ProductEntity } from '../entities/product.entity.ts';
 
 export const productRouter = express.Router();
 
 productRouter.get('/', async (req: Request, res: Response<ApiResponseModel>): Promise<void> => {
   try {
-    const products: Product[] = await ProductService.getProducts();
+    const products: ProductEntity[] = await ProductService.getProducts();
 
     res.status(StatusCodes.OK).json({ data: products, error: null });
   } catch (e: any) {
@@ -25,7 +25,7 @@ productRouter.get('/', async (req: Request, res: Response<ApiResponseModel>): Pr
 productRouter.get('/:id', async (req: Request<{ id: string }>, res: Response<ApiResponseModel>): Promise<void> => {
   try {
     const { id: productId } = req.params;
-    const product: Product = await ProductService.getProduct(+productId);
+    const product: ProductEntity = await ProductService.getProduct(productId);
 
     res.status(StatusCodes.OK).json({ data: product, error: null });
   } catch (e: any) {

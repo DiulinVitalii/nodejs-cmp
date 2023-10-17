@@ -1,31 +1,26 @@
 import { CartRepository } from '../data-access/cart.repository.ts';
-import { Cart } from '../entities/Cart.ts';
-import { User } from '../entities/User.ts';
-import { Order } from '../entities/Order.ts';
 import { OrderModel } from '../models/order.model.ts';
+import { CartEntity } from '../entities/cart.entity.ts';
+import { OrderEntity } from '../entities/order.entity.ts';
 
 export class CardService {
-  static createUserCard(userId: number): Promise<Cart> {
+  static createUserCard(userId: string): Promise<CartEntity> {
     return CartRepository.createUserCard(userId);
   }
 
-  static getUserCard(userId: number): Promise<Cart> {
+  static getUserCard(userId: string): Promise<CartEntity> {
     return CartRepository.getUserCard(userId);
   }
 
-  static getUserById(userId: number): Promise<User |null> {
-    return CartRepository.getUserById(userId);
-  }
-
-  static updateUserCard(userId: number, products: { id: number; count: number; }[]): Promise<Cart> {
+  static updateUserCard(userId: string, products: { id: string; count: number; }[]): Promise<CartEntity> {
     return CartRepository.updateUserCard(userId, products);
   }
 
-  static async softDeleteUserCard(userId: number): Promise<void> {
+  static async softDeleteUserCard(userId: string): Promise<void> {
     await CartRepository.softDeleteUserCard(userId);
   }
 
-  static createUserOrder(userId: number, data: OrderModel): Promise<Order> {
+  static createUserOrder(userId: string, data: OrderModel): Promise<OrderEntity> {
     return CartRepository.createUserOrder(userId, data);
   }
 }
