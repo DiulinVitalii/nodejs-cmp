@@ -7,6 +7,7 @@ import { SOMETHING_WENT_WRONG } from '../utils/constants.ts';
 import { OrderModel } from '../models/order.model.ts';
 import { CartEntity } from '../entities/cart.entity.ts';
 import { OrderEntity } from '../entities/order.entity.ts';
+import { isAdmin } from '../middlewares/is-admin.ts';
 
 export const cartRouter = express.Router();
 
@@ -58,7 +59,7 @@ cartRouter.put('/', validateRequestCardData, async (req: Request<any, any, {id: 
   }
 });
 
-cartRouter.delete('/', async (req: Request, res: Response<ApiResponseModel>): Promise<void> => {
+cartRouter.delete('/', isAdmin, async (req: Request, res: Response<ApiResponseModel>): Promise<void> => {
   try {
     const userId: string = req.headers['x-user-id'] as string;
     await CardService.softDeleteUserCard(userId);

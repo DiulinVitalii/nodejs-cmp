@@ -1,12 +1,13 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { UserService } from '../services/user.service.ts';
 import { StatusCodes } from 'http-status-codes';
+import { UserEntity } from '../entities/user.entity.ts';
 
 export const userRouter = express.Router();
 
-userRouter.post('/', async (req, res) => {
+userRouter.post('/', async (req: Request<any, any, Omit<UserEntity, 'id'>>, res: Response) => {
   try {
-    const user = await UserService.createUser();
+    const user = await UserService.createUser(req.body);
 
     res.status(StatusCodes.CREATED).json({ data: user, error: null });
   } catch (e: any) {
@@ -14,7 +15,7 @@ userRouter.post('/', async (req, res) => {
   }
 });
 
-userRouter.get('/', async (req, res) => {
+userRouter.get('/', async (req: Request, res: Response) => {
   try {
     const userId: string = req.headers['x-user-id'] as string;
     const user = await UserService.getUserById(userId);
