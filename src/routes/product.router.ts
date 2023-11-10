@@ -1,15 +1,18 @@
 import express, { Request, Response } from 'express';
-import { ProductService } from '../services/product.service.ts';
+import { ProductService } from '../services/product.service';
 import { StatusCodes } from 'http-status-codes';
-import { ApiResponseModel } from '../models/api-response.model.ts';
-import { SOMETHING_WENT_WRONG } from '../utils/constants.ts';
-import { ProductEntity } from '../entities/product.entity.ts';
+import { ApiResponseModel } from '../models/api-response.model';
+import { SOMETHING_WENT_WRONG } from '../utils/constants';
+import { ProductEntity } from '../entities/product.entity';
+import { debuglog } from '../configs/debug';
 
 export const productRouter = express.Router();
 
 productRouter.get('/', async (req: Request, res: Response<ApiResponseModel>): Promise<void> => {
   try {
     const products: ProductEntity[] = await ProductService.getProducts();
+
+    debuglog(`get products = ${JSON.stringify(products)}`);
 
     res.status(StatusCodes.OK).json({ data: products, error: null });
   } catch (e: any) {
@@ -26,6 +29,8 @@ productRouter.get('/:id', async (req: Request<{ id: string }>, res: Response<Api
   try {
     const { id: productId } = req.params;
     const product: ProductEntity = await ProductService.getProduct(productId);
+
+    debuglog(`get prduct with productId=${productId} = ${JSON.stringify(product)}`);
 
     res.status(StatusCodes.OK).json({ data: product, error: null });
   } catch (e: any) {

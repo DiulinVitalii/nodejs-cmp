@@ -1,5 +1,5 @@
-import { UserRepository } from '../data-access/user.repository.ts';
-import { UserEntity } from '../entities/user.entity.ts';
+import { UserRepository } from '../data-access/user.repository';
+import { UserEntity } from '../entities/user.entity';
 
 export class UserService {
   static createUser(user: Omit<UserEntity, 'id'>): Promise<UserEntity> {

@@ -1,7 +1,7 @@
-import { CustomError } from '../utils/custom-error.ts';
-import { NO_PRODUCT } from '../utils/constants.ts';
+import { CustomError } from '../utils/custom-error';
+import { NO_PRODUCT } from '../utils/constants';
 import { StatusCodes } from 'http-status-codes';
-import { Product, ProductEntity } from '../entities/product.entity.ts';
+import { Product, ProductEntity } from '../entities/product.entity';
 
 export class ProductRepository {
   static getProducts(): Promise<ProductEntity[]> {

@@ -1,10 +1,10 @@
-import { CustomError } from '../utils/custom-error.ts';
+import { CustomError } from '../utils/custom-error';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import { NO_CART } from '../utils/constants.ts';
-import { OrderModel } from '../models/order.model.ts';
-import { Cart, CartEntity } from '../entities/cart.entity.ts';
-import { ProductEntity } from '../entities/product.entity.ts';
-import { Order, OrderEntity } from '../entities/order.entity.ts';
+import { NO_CART } from '../utils/constants';
+import { OrderModel } from '../models/order.model';
+import { Cart, CartEntity } from '../entities/cart.entity';
+import { ProductEntity } from '../entities/product.entity';
+import { Order, OrderEntity } from '../entities/order.entity';
 
 export class CartRepository {
   static async createUserCard(userId: string): Promise<CartEntity> {

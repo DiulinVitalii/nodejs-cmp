@@ -1,7 +1,7 @@
-import { UserEntity } from '../entities/user.entity.ts';
-import { UserRepository } from '../data-access/user.repository.ts';
-import { CustomError } from '../utils/custom-error.ts';
-import { INVALID_CREDENTIALS, USER_ALREADY_EXIST } from '../utils/constants.ts';
+import { UserEntity } from '../entities/user.entity';
+import { UserRepository } from '../data-access/user.repository';
+import { CustomError } from '../utils/custom-error';
+import { INVALID_CREDENTIALS, USER_ALREADY_EXIST } from '../utils/constants';
 import { StatusCodes } from 'http-status-codes';
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
@@ -24,16 +24,16 @@ export class AuthService {
   }
 
   static async authorizeUser(email: string, password: string): Promise<string> {
-    const user: UserEntity | null = await UserRepository.getUserByEmail(email);
-    const passwordIsValid = await bcrypt.compare(password, user!.password);
+    const user: UserEntity = await UserRepository.getUserByEmail(email) as UserEntity;
+    const passwordIsValid = await bcrypt.compare(password, user.password);
 
     if (!user && !passwordIsValid) {
       throw new CustomError(INVALID_CREDENTIALS, StatusCodes.BAD_REQUEST);
     }
 
     const token: string = jwt.sign(
-      { user_id: user!.id, email, role: user!.role },
-      process.env.TOKEN_KEY!,
+      { user_id: user.id, email, role: user.role },
+      process.env.TOKEN_KEY as string,
       {
         expiresIn: "2h",
       }

@@ -1,7 +1,7 @@
-import { CartRepository } from '../data-access/cart.repository.ts';
-import { OrderModel } from '../models/order.model.ts';
-import { CartEntity } from '../entities/cart.entity.ts';
-import { OrderEntity } from '../entities/order.entity.ts';
+import { CartRepository } from '../data-access/cart.repository';
+import { OrderModel } from '../models/order.model';
+import { CartEntity } from '../entities/cart.entity';
+import { OrderEntity } from '../entities/order.entity';
 
 export class CardService {
   static createUserCard(userId: string): Promise<CartEntity> {

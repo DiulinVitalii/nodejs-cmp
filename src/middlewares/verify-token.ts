@@ -1,8 +1,8 @@
 import * as jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { UserEntity } from '../entities/user.entity.ts';
+import { UserEntity } from '../entities/user.entity';
 import { StatusCodes } from 'http-status-codes';
-import { INVALID_TOKEN, TOKEN_REQUIRED } from '../utils/constants.ts';
+import { INVALID_TOKEN, TOKEN_REQUIRED } from '../utils/constants';
 
 export async function verifyToken (req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { UserService } from '../services/user.service.ts';
+import { UserService } from '../services/user.service';
 import { StatusCodes } from 'http-status-codes';
-import { UserEntity } from '../entities/user.entity.ts';
+import { UserEntity } from '../entities/user.entity';
 
 export const userRouter = express.Router();
 
