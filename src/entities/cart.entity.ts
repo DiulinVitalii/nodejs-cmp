@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { ProductEntity } from './product.entity.ts';
+import { ProductEntity } from './product.entity';
 
 export interface CartItemEntity {
   product: ProductEntity

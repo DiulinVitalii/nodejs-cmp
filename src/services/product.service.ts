@@ -1,5 +1,5 @@
-import { ProductRepository } from '../data-access/product.repository.ts';
-import { ProductEntity } from '../entities/product.entity.ts';
+import { ProductRepository } from '../data-access/product.repository';
+import { ProductEntity } from '../entities/product.entity';
 
 export class ProductService {
   static getProducts(): Promise<ProductEntity[]> {

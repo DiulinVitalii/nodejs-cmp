@@ -1,6 +1,6 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { DataSeedService } from '../services/data-seed.service.ts';
+import { DataSeedService } from '../services/data-seed.service';
 
 export const dataSeedRouter = express.Router();
 

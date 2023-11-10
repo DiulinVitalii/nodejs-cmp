@@ -1,4 +1,4 @@
-import { User, UserEntity } from '../entities/user.entity.ts';
+import { User, UserEntity } from '../entities/user.entity';
 
 export class UserRepository {
   static createUser(user: Omit<UserEntity, 'id'>): Promise<UserEntity> {

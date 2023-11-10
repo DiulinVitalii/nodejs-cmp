@@ -1,4 +1,4 @@
-import { Cart, CartEntity, CartItemEntity } from './cart.entity.ts';
+import { CartEntity, CartItemEntity } from './cart.entity';
 import mongoose, { Model, Schema } from 'mongoose';
 
 type ORDER_STATUS = 'created' | 'completed';

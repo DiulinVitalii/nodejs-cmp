@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { CustomError } from '../utils/custom-error.ts';
+import { CustomError } from '../utils/custom-error';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import { ApiResponseModel } from '../models/api-response.model.ts';
+import { ApiResponseModel } from '../models/api-response.model';
 
 export const validateRequestCardData = (req: Request, res: Response<ApiResponseModel>, next: NextFunction): void => {
   const {error} = cardSchema.validate(req.body);

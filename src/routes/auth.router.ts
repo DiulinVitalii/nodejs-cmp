@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
-import { AuthService } from '../services/auth.service.ts';
-import { UserEntity } from '../entities/user.entity.ts';
+import { AuthService } from '../services/auth.service';
+import { UserEntity } from '../entities/user.entity';
 import { StatusCodes } from 'http-status-codes';
-import { INPUT_REQUIRED, SOMETHING_WENT_WRONG, USER_REGISTERED } from '../utils/constants.ts';
+import { INPUT_REQUIRED, SOMETHING_WENT_WRONG, USER_REGISTERED } from '../utils/constants';
 
 export const authRouter = express.Router();
 
